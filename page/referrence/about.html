@@ -5,7 +5,7 @@
   <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>American Box office dashboard</title>  <!--#change the title of the page-->
+        <title>Fund raising </title>  <!--#change the title of the page-->
     
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css">
@@ -40,7 +40,7 @@
             
             <a class="navbar-brand" href="https://www.optimism.io/"> <!--#change-->
                 <h2 style="background:-webkit-linear-gradient(#fb93a4,#fa0303 );
-                -webkit-background-clip:text;-webkit-text-fill-color:transparent">American Box office</h2><!--#change--> 
+                -webkit-background-clip:text;-webkit-text-fill-color:transparent">Fund raising</h2><!--#change--> 
             </a><!--#change brand link and title-->
 
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,11 +50,11 @@
             <div class="collapse navbar-collapse" id="navbarResponsive">
               <ul class="navbar-nav ms-auto">
                 <li class="nav-item active">
-                        <a class="nav-link aa" href="../../index.html">Home</a>  <!--#change-->
+                        <a class="nav-link aa" href="../../index.html"style="border-radius: 25px; border:2px solid gray">Home</a>  <!--#change-->
                 </li>
 
                 <li class="nav-item active">
-                        <a class="nav-link aa" href="../referrence/about.html">Resource</a>  <!--#change-->
+                        <a class="nav-link aa" href="../referrence/about.html" style="border-radius: 25px; border:2px solid gray">Resource</a>  <!--#change-->
                 </li>
 
 
@@ -73,163 +73,97 @@
                 <div class="raw">
                 <h1 class=" mb-5 mt-5 aa" style="font-weight: bold;"> Referrence</h1> <!--#change-->
 
-                <table style="border-collapse:collapse;font-size:0.9em;font-family:sans-serif">
-                <thead style="font-size: medium;">
-                    <tr style="box-shadow:0 0 20px rgba(0, 0, 0, 0.15)">
-                      <th><code></code></th>
-                      <th><code>Websites</code></th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                      <td><a href=""target="_blanck"> </a></td>
-                      <td><a href="https://en.wikipedia.org/wiki"target="_blanck">wikipedia</a></td>
-                    </tr>
-                    <tr>
-                      <td><a href=""target="_blanck"></a></td>
-                      <td><a href="https://www.kaggle.com/datasets/thedevastator/jobs-dataset-from-glassdoor"target="_blanck">kaggle</a></td>
-                    </tr>
-         
-                </tbody>
-                </table>
 
 
-                <p  class="mt-5" style="font-family:serif"><code>query : </code>select 
-                  round(avg(max_salary)) as value ,
-                  industry as name
-                  from eda_data
-                  where type_of_ownership is not -1
-                  group by 2 
-                  order by 1 desc limit 10</p>
-                <p class="mt-5" style="font-family:serif"><code>query : </code>select 
-                  round(avg(max_salary)) as value ,
-                  type_of_ownership as name
-                  from eda_data
-                  where type_of_ownership is not -1
-                  group by 2 
-                  order by 1 desc limit 10</p>
-                <p class="mt-5" style="font-family:serif"><code>query : </code>with a as (
-                  select 
-                   avg(max_salary) ,
-                   job_title ,
-                   company_name 
-                   from eda_data 
-                   group by 2 
-                   order by 1 desc limit 10 ) 
-                   
-                 
-                 select 
-                 job_title ,
-                 company_name ,
-                 location ,
-                 size ,
-                 founded ,
-                 type_of_ownership ,
-                 industry ,
-                 revenue ,
-                 min_salary ,
-                 max_salary 
-                 from eda_data
-                 where company_name in (select  company_name from a ) 
-                 and  job_title in (select  job_title from a )</p>
+
+                <p  class="mt-5" style="font-family:serif"><code>the databset : you can download the csv or json file related to the fund raising </code>
+                <a href="https://defillama.com/raises">link</a></p>
+                <p class="mt-5" style="font-family:serif"><code>the site wich i made query and run  : </code><a href="https://geniidata.com/">link</a></p>
+                <p class="mt-5" style="font-family:serif"><code>query : </code>with 
+
+                  b as (
+                      select 
+                  split(date_trunc('month',date  ),'00:00:00')[0] as date ,
+                  count(distinct round)as rounds 
+                   from db_box.de 
+                   group by 1 order by 1
+                  ),
+                  a as 
+                  (select 
+                  split(date_trunc('month',date  ),'00:00:00')[0] as date ,
+                  sum(amount_raised) as volume ,
+                  count(distinct lead_investor)as leads ,
+                  count(distinct name)as projects ,
+                  count(distinct category)as categorys 
+                  
+                   from db_box.de 
+                   group by 1 order by 1)
+                  
+                   select 
+                   a.date ,
+                   volume ,b.rounds , leads , projects , categorys ,
+                   sum(volume) over (order by a.date ) as cum_vol ,
+                   sum(b.rounds) over (order by a.date ) as cum_ron ,
+                   sum(leads) over (order by a.date ) as cum_lead ,
+                   sum(projects) over (order by a.date ) as cum_pro ,
+                   sum(categorys) over (order by a.date ) as cum_ca
+                   from a inner join b on a.date =b.date</p>
+                <p class="mt-5" style="font-family:serif"> <code>query : </code>select 
+                  sum(amount_raised)as volume, 
+                  name  ,round
+                  from db_box.de 
+                  where amount_raised is not null 
+                  and round LIKE '%Seed%'
+                  group by 2,3 order by 1 desc limit 10</p>
                 <p class="mt-5" style="font-family:serif"> <code>query : </code>with a as (
-                  select 
-                   avg(max_salary) ,
-                   company_name 
-                   from eda_data 
-                   group by 2 
-                   order by 1 desc limit 10 ) 
-                   
-                 
-                 select 
-                 company_name ,
-                 location ,
-                 headquarters ,
-                 size ,
-                 founded ,
-                 type_of_ownership ,
-                 industry ,
-                 revenue ,
-                 min_salary ,
-                 max_salary 
-                 from eda_data
-                 where company_name in (select  company_name from a )</p>
-                <p class="mt-5" style="font-family:serif"> <code>query : </code>with a as (select 
-                  distinct job_state as jj , 
-                  round(avg(min_salary)) as mins 
-                  from 
-                  eda_data 
-                  group by 1
-                  order by 2 asc limit 10 )
-                  select * from a 
-                  order by 2 asc</p>
+                  select sum(amount_raised), name from db_box.de group by 2 order by 1 desc  limit 20 
+              )
+              
+              select 
+              round(sum(amount_raised)/1000000 ,2) as volume, 
+              name , round 
+              from db_box.de 
+              where amount_raised is not null and round is not null and 
+              name in (select  name from a ) 
+              group by 2,3   having volume >0 order by 2</p>
 
- <p class="mt-5" style="font-family:serif"><code>query : </code> select 
-  distinct job_state as jj , 
-  round(avg(max_salary)) as maxs 
-  from 
-  eda_data 
-  group by 1
-  order by 2 desc limit 10with a as (select 
-  distinct job_state as jj , 
-  round(avg(max_salary)) as maxs 
-  from 
-  eda_data 
-  group by 1
-  order by 2 desc limit 10 )
-  select * from a 
-  order by 2 asc</p>
- <p class="mt-5" style="font-family:serif"><code>query : </code> select 
-  job_state , 
-  count(distinct company_name)as com_numm
-  from 
-  eda_data 
-  group by 1 order by 2 desc limit 10</p>
- <p class="mt-5" style="font-family:serif"> <code>query : </code>with 
-  
+
+ <p class="mt-5" style="font-family:serif"><code>query : </code> with 
+
   b as (
-        SELECT 
-        case 
-        when founded between 1701 and 1800 then '18th'
-        when founded between 1801 and 1900 then '19th'
-        when founded between 1901 and 2000 then '20th'
-        when founded > 2001 then '21th'
-        end as decade ,
-        count(*) as com_jobs 
-        FROM eda_data
-        where founded > 0 
-        group by 1) ,
-  
-  
+      select 
+  split(date_trunc('month',date  ),'00:00:00')[0] as date ,
+  count(distinct round)as rounds 
+   from db_box.de 
+   group by 1 order by 1
+  ),
   a as 
-        (SELECT 
-        case 
-        when founded between 1701 and 1800 then '18th'
-        when founded between 1801 and 1900 then '19th'
-        when founded between 1901 and 2000 then '20th'
-        when founded > 2001 then '21th'
-        end as decade ,
-        count(distinct company_name) as com_num ,
-        count(distinct job_state) as com_loc ,
-        count(distinct job_title) as com_job 
+  (select 
+  split(date_trunc('month',date  ),'00:00:00')[0] as date ,
+  sum(amount_raised) as volume ,
+  count(distinct lead_investor)as leads ,
+  count(distinct name)as projects ,
+  count(distinct category)as categorys 
   
+   from db_box.de 
+   group by 1 order by 1)
   
-        FROM eda_data
-        where founded > 0 
-        group by 1)
-  
-  select 
-  a.decade ,
-  com_num ,
-  com_loc ,
-  com_job ,
-  com_jobs ,
-  sum(com_num) over (order by a.decade) as cum_num  ,
-  sum(com_loc) over (order by a.decade) as cum_loc ,
-  sum(com_job) over (order by a.decade) as cum_job ,
-  sum(com_jobs) over (order by a.decade) as cum_jobs  
-  
-  from a inner join b on a.decade =b.decade</p>
+   select 
+   a.date ,
+   volume ,b.rounds , leads , projects , categorys ,
+   sum(volume) over (order by a.date ) as cum_vol ,
+   sum(b.rounds) over (order by a.date ) as cum_ron ,
+   sum(leads) over (order by a.date ) as cum_lead ,
+   sum(projects) over (order by a.date ) as cum_pro ,
+   sum(categorys) over (order by a.date ) as cum_ca
+   from a inner join b on a.date =b.date</p>
+ <p class="mt-5" style="font-family:serif"> <code>query : </code>select 
+  sum(amount_raised)as volume, 
+  name  ,round
+  from db_box.de 
+  where amount_raised is not null 
+  and round LIKE '%A%'
+  group by 2,3 order by 1 desc limit 5</p>
 
             </div>
     </section>
